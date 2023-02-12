@@ -1,0 +1,29 @@
+steps:
+  - id: Batch:Build
+    name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "${_IMAGE_NAME}", "."]
+
+  - id: Batch:Push
+    name: "gcr.io/cloud-builders/docker"
+    args: ["push", "${_IMAGE_NAME}"]
+
+  - id: Batch:Create
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      [
+        "beta",
+        "run",
+        "jobs",
+        "update",
+        "${_JOB_NAME}",
+        "--image",
+        "${_IMAGE_NAME}",
+        "--region",
+        "asia-northeast1",
+      ]
+substitutions:
+  _JOB_NAME: "app-theme-post-batch"
+  _IMAGE_NAME: "gcr.io/${PROJECT_ID}/${_JOB_NAME}:${COMMIT_SHA}"
+images:
+  - ${_IMAGE_NAME}

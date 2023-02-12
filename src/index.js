@@ -28,4 +28,9 @@ async function main() {
   }
 }
 
-main().catch((e) => console.error(e));
+main()
+  .then(() => console.log("集計処理実行完了"))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
